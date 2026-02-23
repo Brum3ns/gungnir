@@ -637,7 +637,7 @@ func (r *Runner) writeToHostFile(hostname string, data interface{}) error {
 		}
 	}, matchingRoot)
 
-	filePath := filepath.Join(r.options.OutputDir, safeRootDomain+".txt")
+	filePath := filepath.Join(r.options.OutputDir, r.makeOutputFilename(safeRootDomain))
 
 	// Use mutex to prevent concurrent file access
 	r.outputMutex.Lock()
@@ -673,6 +673,17 @@ func (r *Runner) writeToHostFile(hostname string, data interface{}) error {
 	}
 
 	return nil
+}
+
+func (r *Runner) makeOutputFilename(domainValue string) string {
+	// Make extension
+	var extension string
+	if r.options.JsonOutput {
+		extension = "json"
+	} else {
+		extension = "txt"
+	}
+	return fmt.Sprintf("%s.%s", domainValue, extension)
 }
 
 func (r *Runner) logCertInfo(entry *ct.RawLogEntry) {
